@@ -31,7 +31,7 @@ void rightBackward() {
 
 void setup() {
   Serial.begin(9600);
-  Serial.print("Start");
+  Serial.println("Start");
 
   pinMode(enable1Pin, OUTPUT);
   pinMode(enable2Pin, OUTPUT);
@@ -45,9 +45,7 @@ void setup() {
 
   leftForward();
   rightForward();
-}
 
-void loop() {
   leftForward();
   delay(500);
   rightBackward();
@@ -56,5 +54,13 @@ void loop() {
   delay(500);
   rightForward();
   delay(500);
+}
+
+void loop() {
+  // Receive Bluetooth signals
+  if (Serial.available() > 0) {
+    char received = Serial.read();
+    Serial.println(received);
+  }
 }
 
