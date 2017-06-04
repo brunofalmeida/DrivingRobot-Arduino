@@ -6,6 +6,8 @@ const int motorLPin2 = 7;
 const int motorRPin1 = 3;
 const int motorRPin2 = 4;
 
+String receivedBuffer = "";
+
 void leftForward() {
   digitalWrite(motorLPin1, HIGH);
   digitalWrite(motorLPin2, LOW);
@@ -60,7 +62,16 @@ void loop() {
   // Receive Bluetooth signals
   if (Serial.available() > 0) {
     char received = Serial.read();
-    Serial.println(received);
+    
+    if (received == '\0') {
+      if (receivedBuffer != "") {
+        Serial.println(receivedBuffer);
+        receivedBuffer = "";
+      }
+      
+    } else {
+      receivedBuffer += received;
+    }
   }
 }
 
