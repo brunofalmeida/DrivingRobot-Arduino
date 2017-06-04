@@ -8,6 +8,12 @@ const int motorRPin2 = 4;
 
 String receivedBuffer = "";
 
+
+void leftStop() {
+  digitalWrite(motorLPin1, LOW);
+  digitalWrite(motorLPin2, LOW);
+}
+
 void leftForward() {
   digitalWrite(motorLPin1, HIGH);
   digitalWrite(motorLPin2, LOW);
@@ -18,6 +24,12 @@ void leftBackward() {
   digitalWrite(motorLPin2, HIGH);
 }
 
+
+void rightStop() {
+  digitalWrite(motorRPin1, LOW);
+  digitalWrite(motorRPin2, LOW);
+}
+
 void rightForward() {
   digitalWrite(motorRPin1, HIGH);
   digitalWrite(motorRPin2, LOW);
@@ -26,6 +38,34 @@ void rightForward() {
 void rightBackward() {
   digitalWrite(motorRPin1, LOW);
   digitalWrite(motorRPin2, HIGH);
+}
+
+
+
+
+void stopMoving() {
+  leftStop();
+  rightStop();
+}
+
+void forward() {
+  leftForward();
+  rightForward();
+}
+
+void backward() {
+  leftBackward();
+  rightBackward();
+}
+
+void left() {
+  leftBackward();
+  rightForward();
+}
+
+void right() {
+  leftForward();
+  rightBackward();
 }
 
 
@@ -56,6 +96,7 @@ void setup() {
   delay(500);
   rightForward();
   delay(500);
+  stopMoving();
 }
 
 void loop() {
@@ -77,12 +118,28 @@ void loop() {
 }
 
 void handleCommand(String command) {
-  if (command == "LF") {
+  if (command == "S") {
+    stopMoving();
+  } else if (command == "F") {
+    forward();
+  } else if (command == "B") {
+    backward();
+  } else if (command == "L") {
+    left();
+  } else if (command == "R") {
+    right();
+  }
+
+  else if (command == "LS") {
+    leftStop();
+  } else if (command == "LF") {
     leftForward();
-  } else if (command == "RF") {
-    rightForward();
   } else if (command == "LB") {
     leftBackward();
+  } else if (command == "RS") {
+    rightStop();
+  } else if (command == "RF") {
+    rightForward();
   } else if (command == "RB") {
     rightBackward();
   }
