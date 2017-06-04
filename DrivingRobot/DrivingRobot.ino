@@ -66,6 +66,7 @@ void loop() {
     if (received == '\0') {
       if (receivedBuffer != "") {
         Serial.println(receivedBuffer);
+        handleCommand(receivedBuffer);
         receivedBuffer = "";
       }
       
@@ -74,4 +75,17 @@ void loop() {
     }
   }
 }
+
+void handleCommand(String command) {
+  if (command == "LF") {
+    leftForward();
+  } else if (command == "RF") {
+    rightForward();
+  } else if (command == "LB") {
+    leftBackward();
+  } else if (command == "RB") {
+    rightBackward();
+  }
+}
+
 
