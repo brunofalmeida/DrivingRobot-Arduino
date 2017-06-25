@@ -1,12 +1,30 @@
-const int enable1Pin = 10;
-const int enable2Pin = 9;
+const int enableLPin = 9;
+const int enableRPin = 10;
 
 const int motorLPin1 = 6;
 const int motorLPin2 = 7;
-const int motorRPin1 = 3;
-const int motorRPin2 = 4;
+const int motorRPin1 = 4;
+const int motorRPin2 = 3;
+
+const int greenLEDPin = 2;
+const int redLEDPin = 5;
 
 String receivedBuffer = "";
+
+
+
+
+void flashGreenLED() {
+  digitalWrite(greenLEDPin, HIGH);
+  delay(100);
+  digitalWrite(greenLEDPin, LOW);
+}
+
+void flashRedLED() {
+  digitalWrite(redLEDPin, HIGH);
+  delay(100);
+  digitalWrite(redLEDPin, LOW);
+}
 
 
 void leftStop() {
@@ -41,31 +59,49 @@ void rightBackward() {
 }
 
 
-
-
 void stopMoving() {
   leftStop();
   rightStop();
+  flashRedLED();
 }
 
 void forward() {
   leftForward();
   rightForward();
+  flashGreenLED();
 }
 
 void backward() {
   leftBackward();
   rightBackward();
+  flashGreenLED();
 }
 
 void left() {
   leftBackward();
   rightForward();
+  flashGreenLED();
 }
 
 void right() {
   leftForward();
   rightBackward();
+  flashGreenLED();
+}
+
+
+void handleCommand(String command) {
+  if (command == "S") {
+    stopMoving();
+  } else if (command == "F") {
+    forward();
+  } else if (command == "B") {
+    backward();
+  } else if (command == "L") {
+    left();
+  } else if (command == "R") {
+    right();
+  }
 }
 
 
@@ -75,29 +111,23 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Start");
 
-  pinMode(enable1Pin, OUTPUT);
-  pinMode(enable2Pin, OUTPUT);
+  pinMode(enableLPin, OUTPUT);
+  pinMode(enableRPin, OUTPUT);
+  
   pinMode(motorLPin1, OUTPUT);
   pinMode(motorLPin2, OUTPUT);
   pinMode(motorRPin1, OUTPUT);
   pinMode(motorRPin2, OUTPUT);
   
-  digitalWrite(enable1Pin, HIGH);
-  digitalWrite(enable2Pin, HIGH);
+  pinMode(greenLEDPin, OUTPUT);
+  pinMode(redLEDPin, OUTPUT);
 
-  leftForward();
-  rightForward();
+  digitalWrite(enableRPin, HIGH);
+  digitalWrite(enableLPin, HIGH);
 
-  leftForward();
-  delay(500);
-  rightBackward();
-  delay(500);
-  leftBackward();
-  delay(500);
-  rightForward();
-  delay(500);
   stopMoving();
 }
+
 
 void loop() {
   // Receive Bluetooth signals
@@ -117,32 +147,6 @@ void loop() {
   }
 }
 
-void handleCommand(String command) {
-  if (command == "S") {
-    stopMoving();
-  } else if (command == "F") {
-    forward();
-  } else if (command == "B") {
-    backward();
-  } else if (command == "L") {
-    left();
-  } else if (command == "R") {
-    right();
-  }
 
-  else if (command == "LS") {
-    leftStop();
-  } else if (command == "LF") {
-    leftForward();
-  } else if (command == "LB") {
-    leftBackward();
-  } else if (command == "RS") {
-    rightStop();
-  } else if (command == "RF") {
-    rightForward();
-  } else if (command == "RB") {
-    rightBackward();
-  }
-}
 
 
