@@ -9,20 +9,26 @@ const int motorRPin2 = 3;
 const int greenLEDPin = 2;
 const int redLEDPin = 5;
 
+const int ledDelay = 50;
+const int turnDelay = 400;
+
 String receivedBuffer = "";
+
+bool goingForward = false;
+bool goingBackward = false;
 
 
 
 
 void flashGreenLED() {
   digitalWrite(greenLEDPin, HIGH);
-  delay(100);
+  delay(ledDelay);
   digitalWrite(greenLEDPin, LOW);
 }
 
 void flashRedLED() {
   digitalWrite(redLEDPin, HIGH);
-  delay(100);
+  delay(ledDelay);
   digitalWrite(redLEDPin, LOW);
 }
 
@@ -63,30 +69,63 @@ void stopMoving() {
   leftStop();
   rightStop();
   flashRedLED();
+
+  goingForward = false;
+  goingBackward = false;
 }
 
 void forward() {
   leftForward();
   rightForward();
   flashGreenLED();
+
+  goingForward = true;
+  goingBackward = false;
 }
 
 void backward() {
   leftBackward();
   rightBackward();
   flashGreenLED();
+
+  goingForward = false;
+  goingBackward = true;
 }
 
 void left() {
-  leftBackward();
-  rightForward();
   flashGreenLED();
+
+  // Briefly turn left, then resume previous direction
+  if (goingForward) {
+    leftStop();
+    rightForward();
+    delay(turnDelay);
+    forward();
+    
+  } else if (goingBackward) {
+    leftStop();
+    rightBackward();
+    delay(turnDelay);
+    backward();
+  }
 }
 
 void right() {
-  leftForward();
-  rightBackward();
   flashGreenLED();
+
+  // Briefly turn right, then resume previous direction
+  if (goingForward) {
+    leftForward();
+    rightStop();
+    delay(turnDelay);
+    forward();
+    
+  } else if (goingBackward) {
+    leftBackward();
+    rightStop();
+    delay(turnDelay);
+    backward();
+  }
 }
 
 
