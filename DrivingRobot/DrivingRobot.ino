@@ -1,13 +1,13 @@
-const int enableLPin = 9;
-const int enableRPin = 10;
+const int enableLPin = 8;
+const int enableRPin = 13;
 
-const int motorLPin1 = 6;
-const int motorLPin2 = 7;
-const int motorRPin1 = 4;
-const int motorRPin2 = 3;
+const int motorLPin1 = 9;
+const int motorLPin2 = 10;
+const int motorRPin1 = 12;
+const int motorRPin2 = 11;
 
 const int greenLEDPin = 2;
-const int redLEDPin = 5;
+const int redLEDPin = 3;
 
 const int ledDelay = 50;
 const int turnDelay = 400;
