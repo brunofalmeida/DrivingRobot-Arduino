@@ -9,6 +9,9 @@ const int motorRPin2 = 11;
 const int greenLEDPin = 2;
 const int redLEDPin = 3;
 
+const int sonarEchoPin = 5;
+const int sonarTrigPin = 4;
+
 const int ledDelay = 50;
 const int turnDelay = 400;
 
@@ -17,6 +20,7 @@ String receivedBuffer = "";
 bool goingForward = false;
 bool goingBackward = false;
 
+const double soundVelocityMPS = 340.0;
 
 
 
@@ -161,10 +165,39 @@ void setup() {
   pinMode(greenLEDPin, OUTPUT);
   pinMode(redLEDPin, OUTPUT);
 
+  pinMode(sonarEchoPin, INPUT);
+  pinMode(sonarTrigPin, OUTPUT);
+
   digitalWrite(enableRPin, HIGH);
   digitalWrite(enableLPin, HIGH);
 
   stopMoving();
+
+
+  // Test the sonar ultrasonic sensor
+  Serial.println("Time (us)\t\tDistance (m)");
+
+  while (true) {
+    // Activate the trigger pin to send the signal
+    digitalWrite(sonarTrigPin, HIGH);
+    delayMicroseconds(15);
+    digitalWrite(sonarTrigPin, LOW);
+
+    // Measure the time taken for the echo signal to return
+    unsigned long timeUS = pulseIn(sonarEchoPin, HIGH);
+    
+    // Calculate the distance to the object
+    double distanceM = ((double) timeUS * 1.0e-6) / 2.0 * soundVelocityMPS;
+
+    // Filter out false readings
+    if (timeUS < 1e5) {
+      Serial.print(timeUS);
+      Serial.print("\t\t");
+      Serial.println(distanceM);
+    }
+    
+    delay(1000);
+  }
 }
 
 
