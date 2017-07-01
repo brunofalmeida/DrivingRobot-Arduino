@@ -188,7 +188,7 @@ void setup() {
 
   stopMoving();
 
-  Serial.println("Time (us)\tDistance (m)");
+//  Serial.println("Time (us)\tDistance (m)");
 }
 
 
@@ -199,7 +199,7 @@ void loop() {
     
     if (received == '\0') {
       if (receivedBuffer != "") {
-//        Serial.println(receivedBuffer);
+        Serial.println(receivedBuffer);
         
         handleCommand(receivedBuffer);
         receivedBuffer = "";
@@ -213,10 +213,14 @@ void loop() {
 
   // Get data from distance sensor and convert it to a distance
   unsigned long timeUS = readTimeUS();
-  double distanceM = timeUSToDistanceM(timeUS);  
+  double distanceM = timeUSToDistanceM(timeUS);
+  double distanceCM = distanceM * 100;
 
   // Filter out false readings
-  if (0.12 < distanceM && distanceM < 3) {    
+  if (0.12 < distanceM && distanceM < 3) {
+    Serial.print("BL: ");
+    Serial.println((uint8_t) distanceCM);
+    
     // Write to the serial monitor
 //    Serial.print(timeUS);
 //    Serial.print("\t\t");
@@ -226,6 +230,8 @@ void loop() {
     if ((distanceM < 0.25) && (goingForward || goingBackward)) {
       stopMoving();
     }
+
+    delay(100);
   }
 }
 
