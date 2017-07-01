@@ -133,6 +133,21 @@ void right() {
 }
 
 
+unsigned long readTimeUS() {
+  // Activate the trigger pin to send the signal
+  digitalWrite(sonarTrigPin, HIGH);
+  delayMicroseconds(15);
+  digitalWrite(sonarTrigPin, LOW);
+
+  // Measure the time taken for the echo signal to return
+  return pulseIn(sonarEchoPin, HIGH);
+}
+
+double timeUSToDistanceM(unsigned long timeUS) {
+  return ((double) timeUS * 1.0e-6) / 2.0 * soundVelocityMPS;
+}
+
+
 void handleCommand(String command) {
   if (command == "S") {
     stopMoving();
@@ -173,31 +188,7 @@ void setup() {
 
   stopMoving();
 
-
-  // Test the sonar ultrasonic sensor
-  Serial.println("Time (us)\t\tDistance (m)");
-
-  while (true) {
-    // Activate the trigger pin to send the signal
-    digitalWrite(sonarTrigPin, HIGH);
-    delayMicroseconds(15);
-    digitalWrite(sonarTrigPin, LOW);
-
-    // Measure the time taken for the echo signal to return
-    unsigned long timeUS = pulseIn(sonarEchoPin, HIGH);
-    
-    // Calculate the distance to the object
-    double distanceM = ((double) timeUS * 1.0e-6) / 2.0 * soundVelocityMPS;
-
-    // Filter out false readings
-    if (timeUS < 1e5) {
-      Serial.print(timeUS);
-      Serial.print("\t\t");
-      Serial.println(distanceM);
-    }
-    
-    delay(1000);
-  }
+  Serial.println("Time (us)\tDistance (m)");
 }
 
 
@@ -208,13 +199,32 @@ void loop() {
     
     if (received == '\0') {
       if (receivedBuffer != "") {
-        Serial.println(receivedBuffer);
+//        Serial.println(receivedBuffer);
+        
         handleCommand(receivedBuffer);
         receivedBuffer = "";
       }
       
     } else {
       receivedBuffer += received;
+    }
+  }
+
+
+  // Get data from distance sensor and convert it to a distance
+  unsigned long timeUS = readTimeUS();
+  double distanceM = timeUSToDistanceM(timeUS);  
+
+  // Filter out false readings
+  if (0.12 < distanceM && distanceM < 3) {    
+    // Write to the serial monitor
+//    Serial.print(timeUS);
+//    Serial.print("\t\t");
+//    Serial.println(distanceM);
+
+    // If the robot is moving and within 0.25m of an object, stop moving
+    if ((distanceM < 0.25) && (goingForward || goingBackward)) {
+      stopMoving();
     }
   }
 }
