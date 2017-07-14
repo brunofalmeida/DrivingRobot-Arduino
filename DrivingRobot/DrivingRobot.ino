@@ -23,7 +23,6 @@ bool goingBackward = false;
 const double soundVelocityMPS = 340.0;
 
 
-
 void flashGreenLED() {
   digitalWrite(greenLEDPin, HIGH);
   delay(ledDelay);
@@ -217,7 +216,7 @@ void loop() {
   double distanceCM = distanceM * 100;
 
   // Filter out false readings
-  if (0.12 < distanceM && distanceM < 3) {
+  if (15 <= distanceCM && distanceCM < 300) {
     Serial.print("BL: ");
     Serial.println((uint8_t) distanceCM);
     
@@ -227,7 +226,7 @@ void loop() {
 //    Serial.println(distanceM);
 
     // If the robot is moving and within 0.25m of an object, stop moving
-    if ((distanceM < 0.25) && (goingForward || goingBackward)) {
+    if (distanceCM < 25 && goingForward) {
       stopMoving();
     }
 
